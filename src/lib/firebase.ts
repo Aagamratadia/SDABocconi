@@ -27,7 +27,7 @@ try {
     experimentalForceLongPolling: true,
     // Alternatively, experimentalAutoDetectLongPolling: true,
   });
-} catch (_e) {
+} catch {
   // If Firestore is already initialized, fall back to getting the instance
   db = getFirestore(app);
 }

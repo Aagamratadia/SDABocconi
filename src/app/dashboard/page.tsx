@@ -69,11 +69,20 @@ export default function DashboardPage() {
                 <svg
                   xmlns="http://www.w3.org/2000/svg"
                   viewBox="0 0 24 24"
-                  fill="currentColor"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                   className="h-4 w-4"
-                  aria-hidden
+                  role="img"
+                  aria-label="Sign out"
                 >
-                  <path d="M15.75 9V5.25A2.25 2.25 0 0 0 13.5 3h-6A2.25 2.25 0 0 0 5.25 5.25v13.5A2.25 2.25 0 0 0 7.5 21h6a2.25 2.25 0 0 0 2.25-2.25V15M12 12h9m0 0-3-3m3 3-3 3"/>
+                  {/* Door/Device */}
+                  <path d="M13 5H8a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h5" />
+                  {/* Arrow out */}
+                  <path d="M21 12H10" />
+                  <path d="M17 8l4 4-4 4" />
                 </svg>
                 Sign Out
               </button>

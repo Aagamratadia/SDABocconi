@@ -6,6 +6,7 @@ import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { useAuth } from '@/hooks/useAuth';
 import { auth, db } from '@/lib/firebase'; // Import Firestore instance
+import { FirebaseError } from 'firebase/app';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { setDoc, doc } from 'firebase/firestore'; // Import Firestore functions
 
@@ -58,8 +59,8 @@ function RegisterPage() {
         createdAt: new Date(),
       });
 
-    } catch (err: any) {
-      if (err.code === 'auth/email-already-in-use') {
+    } catch (err: unknown) {
+      if (err instanceof FirebaseError && err.code === 'auth/email-already-in-use') {
         setError('This email address is already in use.');
       } else {
         setError('Failed to create an account. Please try again.');

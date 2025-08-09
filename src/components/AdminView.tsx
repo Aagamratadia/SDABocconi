@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { db, storage } from '../lib/firebase';
 import { collection, query, orderBy, onSnapshot, Timestamp, doc, deleteDoc } from 'firebase/firestore';
 import { ref as storageRef, deleteObject } from 'firebase/storage';
+import { FirebaseError } from 'firebase/app';
 
 // Define the shape of a single receipt document
 interface Receipt {
@@ -158,14 +159,14 @@ export default function AdminView() {
                               const sRefByPath = storageRef(storage, `receipts/${receipt.fileName}`);
                               await deleteObject(sRefByPath);
                               storageDeleted = true;
-                            } catch (e: any) {
-                              if (e?.code === 'storage/object-not-found') {
+                            } catch (e: unknown) {
+                              if (e instanceof FirebaseError && e.code === 'storage/object-not-found') {
                                 // Fallback to URL-based ref
                                 try {
                                   const sRefByUrl = storageRef(storage, receipt.fileUrl);
                                   await deleteObject(sRefByUrl);
                                   storageDeleted = true;
-                                } catch (e2) {
+                                } catch (innerErr: unknown) {
                                   // still not found; proceed to delete Firestore doc anyway
                                   console.warn('Storage object not found by path or URL, proceeding to delete doc.');
                                 }
@@ -179,8 +180,8 @@ export default function AdminView() {
                               const sRefByUrl = storageRef(storage, receipt.fileUrl);
                               await deleteObject(sRefByUrl);
                               storageDeleted = true;
-                            } catch (e: any) {
-                              if (e?.code === 'storage/object-not-found') {
+                            } catch (e: unknown) {
+                              if (e instanceof FirebaseError && e.code === 'storage/object-not-found') {
                                 console.warn('Storage object not found via URL, proceeding to delete doc.');
                               } else {
                                 throw e;
@@ -195,9 +196,9 @@ export default function AdminView() {
                             // Surface a soft warning if file wasn't found
                             alert('Record deleted. Note: File was not found in Storage (it may have been removed earlier).');
                           }
-                        } catch (err: any) {
+                        } catch (err: unknown) {
                           console.error('Delete failed:', err);
-                          const msg = err?.message ?? 'Failed to delete. Please check permissions and try again.';
+                          const msg = err instanceof Error ? err.message : 'Failed to delete. Please check permissions and try again.';
                           alert(msg);
                         }
                       }}

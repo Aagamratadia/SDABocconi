@@ -56,7 +56,7 @@ export default function LoginPage() {
           <div className="w-full max-w-md mx-auto">
             <h1 className="text-3xl font-bold text-[#003E68] mb-2">Sign In</h1>
             <p className="text-gray-600 mb-8">
-              Don't have an account?{' '}
+              Don&rsquo;t have an account?{' '}
               <Link href="/register" className="font-semibold text-[#003E68] hover:underline">
                 Sign up
               </Link>
