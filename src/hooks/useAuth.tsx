@@ -30,13 +30,22 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const adminUIDs = process.env.NEXT_PUBLIC_ADMIN_UIDS?.split(',') ?? [];
-        const userRole: UserRole = adminUIDs.includes(user.uid) ? 'admin' : 'user';
-        
-        setUser(user);
-        setRole(userRole);
+        try {
+          // Get the ID token result which contains custom claims
+          const idTokenResult = await user.getIdTokenResult();
+          // Check if the user has the admin claim
+          const isAdmin = idTokenResult.claims.admin === true;
+          const userRole: UserRole = isAdmin ? 'admin' : 'user';
+          
+          setUser(user);
+          setRole(userRole);
+        } catch (error) {
+          console.error('Error getting user claims:', error);
+          setUser(user);
+          setRole('user'); // Default to user role if there's an error
+        }
       } else {
         setUser(null);
         setRole(null);

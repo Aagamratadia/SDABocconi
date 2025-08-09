@@ -1,0 +1,21 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Default rule - deny access
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+    
+    // Receipts folder rules
+    match /receipts/{fileId} {
+      // Allow read access if the user is the owner OR has admin claim
+      allow read: if request.auth != null && 
+                  (resource.metadata.ownerId == request.auth.uid || 
+                   request.auth.token.admin == true);
+      
+      // Allow write access only to authenticated users, and enforce metadata
+      allow write: if request.auth != null && 
+                   request.resource.metadata.ownerId == request.auth.uid;
+    }
+  }
+}
