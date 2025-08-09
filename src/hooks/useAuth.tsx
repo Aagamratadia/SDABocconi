@@ -36,7 +36,20 @@ export function AuthProvider({ children }: AuthProviderProps) {
           // Get the ID token result which contains custom claims
           const idTokenResult = await user.getIdTokenResult();
           // Check if the user has the admin claim
-          const isAdmin = idTokenResult.claims.admin === true;
+          const hasAdminClaim = idTokenResult.claims.admin === true;
+
+          // Also allow env-configured admin emails for convenience in dev/prod
+          // Prefer NEXT_PUBLIC_ADMIN_EMAILS, but support NEXT_PUBLIC_ADMIN_UIDS for backward compat
+          const envAdminsRaw =
+            process.env.NEXT_PUBLIC_ADMIN_EMAILS ?? process.env.NEXT_PUBLIC_ADMIN_UIDS ?? '';
+          const envAdminList = envAdminsRaw
+            .split(',')
+            .map((s) => s.trim().toLowerCase())
+            .filter(Boolean);
+          const email = (user.email ?? '').toLowerCase();
+          const isEnvAdmin = email && envAdminList.includes(email);
+
+          const isAdmin = hasAdminClaim || isEnvAdmin;
           const userRole: UserRole = isAdmin ? 'admin' : 'user';
           
           setUser(user);

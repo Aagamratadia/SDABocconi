@@ -2,7 +2,7 @@
 
 import { initializeApp, getApps, getApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
-import { getFirestore } from "firebase/firestore";
+import { getFirestore, initializeFirestore, type Firestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
@@ -18,7 +18,19 @@ const firebaseConfig = {
 const app = !getApps().length ? initializeApp(firebaseConfig) : getApp();
 
 const auth = getAuth(app);
-const db = getFirestore(app);
+// Some networks/ad-blockers/proxies break Firestore's default WebChannel transport
+// Use long-polling in the browser to avoid 400 transport errors.
+let db: Firestore;
+try {
+  db = initializeFirestore(app, {
+    // Force long polling to avoid WebChannel 400 errors in restricted networks
+    experimentalForceLongPolling: true,
+    // Alternatively, experimentalAutoDetectLongPolling: true,
+  });
+} catch (_e) {
+  // If Firestore is already initialized, fall back to getting the instance
+  db = getFirestore(app);
+}
 const storage = getStorage(app);
 
 export { app, auth, db, storage };
