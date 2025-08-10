@@ -3,12 +3,13 @@ import { useRef, useState } from 'react';
 import { useAuth } from '../hooks/useAuth';
 import { storage, db } from '../lib/firebase';
 import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
 
 export default function UserView() {
   const { user } = useAuth();
   const [name, setName] = useState<string>('');
-  const [details, setDetails] = useState<string>('');
+  const [paymentRef, setPaymentRef] = useState<string>('');
+  const [paymentDate, setPaymentDate] = useState<string>('');
   const [file, setFile] = useState<File | null>(null);
   const [error, setError] = useState<string>('');
   const [success, setSuccess] = useState<string>('');
@@ -44,8 +45,8 @@ export default function UserView() {
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!file || !name || !user) {
-      setError('Please provide a name and select a file.');
+    if (!file || !name || !paymentDate || !paymentRef || !user) {
+      setError('Please provide a name, payment date, payment reference number, and select a file.');
       return;
     }
 
@@ -77,7 +78,8 @@ export default function UserView() {
             const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
             await addDoc(collection(db, 'receipts'), {
               name,
-              details,
+              paymentReference: paymentRef,
+              paymentDate: Timestamp.fromDate(new Date(paymentDate)),
               fileUrl: downloadURL,
               fileName,
               uploaderUid: user.uid,
@@ -86,7 +88,8 @@ export default function UserView() {
             });
             setSuccess('Receipt uploaded successfully!');
             setName('');
-            setDetails('');
+            setPaymentRef('');
+            setPaymentDate('');
             setFile(null);
             // Reset the file input via ref
             if (fileInputRef.current) fileInputRef.current.value = '';
@@ -134,17 +137,32 @@ export default function UserView() {
         </div>
 
         <div>
-          <label htmlFor="details" className="mb-1 block text-sm font-medium text-[#003E68]">
-            Details (Optional)
+          <label htmlFor="paymentDate" className="mb-1 block text-sm font-medium text-[#003E68]">
+            Date of Payment
           </label>
-          <textarea
-            id="details"
-            value={details}
-            onChange={(e) => setDetails(e.target.value)}
-            rows={3}
+          <input
+            type="date"
+            id="paymentDate"
+            value={paymentDate}
+            onChange={(e) => setPaymentDate(e.target.value)}
+            required
             className="mt-1 block w-full rounded-xl border border-[#003E68]/20 bg-white px-3 py-2 text-[#003E68] shadow-sm outline-none placeholder:text-[#003E68]/40 focus:border-[#003E68] focus:ring-4 focus:ring-[#003E68]/20"
-            placeholder="Short description, amount, etc."
-          ></textarea>
+          />
+        </div>
+
+        <div>
+          <label htmlFor="paymentRef" className="mb-1 block text-sm font-medium text-[#003E68]">
+            Payment Reference Number
+          </label>
+          <input
+            type="text"
+            id="paymentRef"
+            value={paymentRef}
+            onChange={(e) => setPaymentRef(e.target.value)}
+            required
+            className="mt-1 block w-full rounded-xl border border-[#003E68]/20 bg-white px-3 py-2 text-[#003E68] shadow-sm outline-none placeholder:text-[#003E68]/40 focus:border-[#003E68] focus:ring-4 focus:ring-[#003E68]/20"
+            placeholder="e.g., UTR/Ref No."
+          />
         </div>
 
         <div>
@@ -174,6 +192,10 @@ export default function UserView() {
             )}
           </div>
           <p className="mt-2 text-xs text-[#003E68]/60">Accepted: JPG, PNG, GIF, PDF</p>
+          <div className="mt-3 rounded-md border border-red-200 bg-red-50 px-3 py-2 text-xs text-red-700">
+            Please upload the SMS or email received from the loan team, or a bank statement clearly indicating the name of the
+            account from which the amount has been paid.
+          </div>
         </div>
 
         {loading && (

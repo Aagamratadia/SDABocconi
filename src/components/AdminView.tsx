@@ -10,11 +10,13 @@ import { FirebaseError } from 'firebase/app';
 interface Receipt {
   id: string;
   name: string;
-  details: string;
+  details?: string;
+  paymentReference?: string;
   fileUrl: string;
   fileName?: string; // optional; fallback to fileUrl when deleting if not present
   uploaderEmail: string;
   createdAt: Timestamp; // Firestore Timestamp
+  paymentDate?: Timestamp; // Optional payment date
 }
 
 export default function AdminView() {
@@ -113,7 +115,9 @@ export default function AdminView() {
                         {receipt.name}
                       </p>
                     </div>
-                    <p className="mt-1 text-sm text-[#003E68]/80">{receipt.details}</p>
+                    {receipt.paymentReference && (
+                      <p className="mt-1 text-sm text-[#003E68]/80">Ref: {receipt.paymentReference}</p>
+                    )}
 
                     <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-[#003E68]/70">
                       <span className="rounded-full border border-[#003E68]/15 bg-[#003E68]/5 px-2 py-0.5">
@@ -125,6 +129,12 @@ export default function AdminView() {
                           ? new Date(receipt.createdAt.toDate()).toLocaleString()
                           : 'Date unavailable'}
                       </span>
+                      {receipt.paymentDate && (
+                        <>
+                          <span className="text-[#003E68]/30">•</span>
+                          <span>Paid on {new Date(receipt.paymentDate.toDate()).toLocaleDateString()}</span>
+                        </>
+                      )}
                     </div>
                   </div>
 
