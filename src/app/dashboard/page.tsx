@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
 import { auth } from '@/lib/firebase';
 import { signOut } from 'firebase/auth';
@@ -47,8 +48,8 @@ export default function DashboardPage() {
         <header className="relative z-10 border-b-4 border-[#FBCE0C] bg-[#003E68] shadow-sm">
           <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-4 py-4 sm:px-6 lg:px-8">
             <div className="flex items-center gap-3">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#FBCE0C] text-[#003E68] font-extrabold">
-                GI
+              <div className="flex items-center">
+                <Image src="/logo.png" alt="SDA Bocconi" width={120} height={36} priority className="h-10 w-auto" />
               </div>
               <div>
                 <h1 className="text-2xl font-bold tracking-tight text-white">
