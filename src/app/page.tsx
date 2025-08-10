@@ -3,6 +3,7 @@
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { useAuth } from '@/hooks/useAuth';
 import { auth } from '@/lib/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -110,12 +111,15 @@ export default function LoginPage() {
         <div className="hidden lg:flex w-1/2 bg-[#003E68] items-center justify-center relative p-12">
            <div className="absolute inset-0 bg-cover bg-center opacity-10" style={{backgroundImage: "url('https://www.toptal.com/designers/subtlepatterns/uploads/fancy-cushion.png')"}}></div>
            <div className="z-10 text-white text-left">
-              <h2 className="text-4xl font-bold leading-tight mb-4">
-                Unlock Your Potential.
-              </h2>
-              <p className="text-lg text-yellow-200 font-light">
-                Access exclusive content and features by signing into your account.
-              </p>
+             <div className="mb-6">
+               <Image src="/logo.png" alt="SDA Bocconi" width={160} height={46} priority />
+             </div>
+             <h2 className="text-4xl font-bold leading-tight mb-4">
+               Sign in to submit Payment Receipts.
+             </h2>
+             <p className="text-lg text-yellow-200 font-light">
+               Please sign in to submit and manage your payment receipts.
+             </p>
            </div>
         </div>
 
