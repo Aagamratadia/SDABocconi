@@ -2,14 +2,40 @@
 "use client";
 
 import { AuthProvider } from "@/hooks/useAuth";
-import { ReactNode } from "react";
+import { ReactNode, useMemo, useRef } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import { usePathname } from "next/navigation";
 
 // This component will bundle all client-side context providers.
 // If you add more providers (e.g., for a theme), you would wrap them here.
 export function Providers({ children }: { children: ReactNode }) {
+  const pathname = usePathname();
+  const prevIndexRef = useRef<number>(0);
+  // Define a simple order for direction: lower -> higher slides L->R
+  const routeOrder = useMemo(() => ({
+    "/": 0,
+    "/register": 1,
+  } as Record<string, number>), []);
+  const currentIndex = routeOrder[pathname] ?? 0;
+  // Keep ref update but use only opacity crossfade to avoid layout thrash
+  const direction = currentIndex >= prevIndexRef.current ? 1 : -1;
+  prevIndexRef.current = currentIndex;
+
   return (
     <AuthProvider>
-      {children}
+      <div style={{ overflow: 'hidden' }} className="relative">
+        <AnimatePresence mode="wait" initial={false}>
+          <motion.div
+            key={pathname}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.24, ease: "easeOut" }}
+          >
+            {children}
+          </motion.div>
+        </AnimatePresence>
+      </div>
     </AuthProvider>
   );
 }

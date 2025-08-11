@@ -5,6 +5,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { auth, db } from '@/lib/firebase';
 import { FirebaseError } from 'firebase/app';
@@ -18,7 +19,6 @@ function RegisterPage() {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [confirmPassword, setConfirmPassword] = useState<string>('');
-  const [phone, setPhone] = useState<string>(''); // State for phone number
   const [error, setError] = useState<string | null>(null);
 
   // Redirect authenticated users to the dashboard
@@ -41,10 +41,7 @@ function RegisterPage() {
       setError("Password should be at least 6 characters long.");
       return;
     }
-    if (!phone) {
-        setError("Please enter your phone number.");
-        return;
-    }
+    // No phone number required
 
     try {
       // 1. Create the user with Firebase Authentication
@@ -55,7 +52,6 @@ function RegisterPage() {
       await setDoc(doc(db, "users", newUser.uid), {
         uid: newUser.uid,
         email: newUser.email,
-        phone: phone,
         role: 'user',
         createdAt: new Date(),
       });
@@ -89,7 +85,12 @@ function RegisterPage() {
     >
       <div className="relative w-full max-w-3xl mx-auto flex lg:flex-row-reverse bg-white rounded-xl shadow-2xl overflow-hidden">
         {/* Left Section: Form */}
-        <div className="w-full lg:w-1/2 p-6 sm:p-8 flex flex-col justify-center">
+        <motion.div
+          className="w-full lg:w-1/2 p-6 sm:p-8 flex flex-col justify-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.25, ease: 'easeOut' }}
+        >
           <div className="w-full max-w-md mx-auto">
             <h1 className="text-3xl font-bold text-[#003E68] mb-2">Sign Up</h1>
             <p className="text-gray-600 mb-8">
@@ -112,20 +113,6 @@ function RegisterPage() {
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FBCE0C] focus:border-transparent transition"
                   placeholder="you@example.com"
-                />
-              </div>
-              <div>
-                <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-1">Phone Number</label>
-                <input
-                  id="phone"
-                  name="phone"
-                  type="tel"
-                  autoComplete="tel"
-                  required
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  className="w-full px-4 py-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-[#FBCE0C] focus:border-transparent transition"
-                  placeholder="9876543210"
                 />
               </div>
               <div>
@@ -169,10 +156,15 @@ function RegisterPage() {
               </div>
             </form>
           </div>
-        </div>
+        </motion.div>
 
         {/* Right Section: Decorative Panel */}
-        <div className="hidden lg:flex w-1/2 bg-[#003E68] items-center justify-center relative p-10">
+        <motion.div
+          className="hidden lg:flex w-1/2 bg-[#003E68] items-center justify-center relative p-10"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.25, ease: 'easeOut' }}
+        >
           <div
             className="absolute inset-0 bg-cover bg-center opacity-10"
             style={{ backgroundImage: "url('https://www.toptal.com/designers/subtlepatterns/uploads/fancy-cushion.png')" }}
@@ -184,7 +176,7 @@ function RegisterPage() {
             <h2 className="text-4xl font-bold leading-tight mb-4">Create your account</h2>
             <p className="text-lg text-yellow-200 font-light">Register to submit and manage your payment receipts.</p>
           </div>
-        </div>
+        </motion.div>
       </div>
     </main>
   );

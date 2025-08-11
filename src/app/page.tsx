@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
+import { motion } from 'framer-motion';
 import { useAuth } from '@/hooks/useAuth';
 import { auth } from '@/lib/firebase';
 import { signInWithEmailAndPassword } from 'firebase/auth';
@@ -53,7 +54,12 @@ export default function LoginPage() {
       <div className="relative w-full max-w-4xl mx-auto flex bg-white rounded-xl shadow-2xl overflow-hidden">
         
         {/* Left Section: Form */}
-        <div className="w-full lg:w-1/2 p-8 sm:p-12 flex flex-col justify-center">
+        <motion.div
+          className="w-full lg:w-1/2 p-8 sm:p-12 flex flex-col justify-center"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.25, ease: 'easeOut' }}
+        >
           <div className="w-full max-w-md mx-auto">
             <h1 className="text-3xl font-bold text-[#003E68] mb-2">Sign In</h1>
             <p className="text-gray-600 mb-8">
@@ -105,10 +111,15 @@ export default function LoginPage() {
               </div>
             </form>
           </div>
-        </div>
+        </motion.div>
 
         {/* Right Section: Decorative Panel */}
-        <div className="hidden lg:flex w-1/2 bg-[#003E68] items-center justify-center relative p-12">
+        <motion.div
+          className="hidden lg:flex w-1/2 bg-[#003E68] items-center justify-center relative p-12"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.25, ease: 'easeOut' }}
+        >
            <div className="absolute inset-0 bg-cover bg-center opacity-10" style={{backgroundImage: "url('https://www.toptal.com/designers/subtlepatterns/uploads/fancy-cushion.png')"}}></div>
            <div className="z-10 text-white text-left">
              <div className="mb-6">
@@ -121,7 +132,7 @@ export default function LoginPage() {
                Please sign in to submit and manage your payment receipts.
              </p>
            </div>
-        </div>
+        </motion.div>
 
       </div>
     </main>
