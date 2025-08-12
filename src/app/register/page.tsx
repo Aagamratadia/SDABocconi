@@ -87,9 +87,7 @@ function RegisterPage() {
         {/* Left Section: Form */}
         <motion.div
           className="w-full lg:w-1/2 p-6 sm:p-8 flex flex-col justify-center"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.25, ease: 'easeOut' }}
+          initial={false}
         >
           <div className="w-full max-w-md mx-auto">
             <h1 className="text-3xl font-bold text-[#003E68] mb-2">Sign Up</h1>
@@ -161,9 +159,7 @@ function RegisterPage() {
         {/* Right Section: Decorative Panel */}
         <motion.div
           className="hidden lg:flex w-1/2 bg-[#003E68] items-center justify-center relative p-10"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.25, ease: 'easeOut' }}
+          initial={false}
         >
           <div
             className="absolute inset-0 bg-cover bg-center opacity-10"
